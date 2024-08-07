@@ -102,9 +102,24 @@ class KotlinDebugAdapter(
 
 		var cwd = (args["cwd"] as? String).let { if(it.isNullOrBlank()) projectRoot else Paths.get(it) }
 
-		// Cast from com.google.gson.internal.LinkedTreeMap
-		@Suppress("UNCHECKED_CAST")
-		val env = args["env"] as? Map<String, String> ?: mapOf()
+		val env = mutableMapOf<String, String>().apply {
+			(args["envFile"] as? String)?.let { Paths.get(it) }?.let { envFile ->
+				envFile.toFile().readLines()
+					.map { it.trim() }
+					.filter { it.isNotBlank() && !it.startsWith("#") }
+					.forEach {
+						val (key, value) = it.split("=", limit = 2)
+						set(key, value)
+					}
+			}
+			
+			// apply 'env' from launch request overriding contents of 'envFile'
+			args.get("env")?.let { env ->
+				// Cast from com.google.gson.internal.LinkedTreeMap
+				@Suppress("UNCHECKED_CAST")
+				putAll(env as Map<String, String>)
+			}
+		}.toMap()
 
 		setupCommonInitializationParams(args)
 
