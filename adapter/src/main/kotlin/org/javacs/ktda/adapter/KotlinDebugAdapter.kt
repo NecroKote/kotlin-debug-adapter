@@ -104,7 +104,7 @@ class KotlinDebugAdapter(
 
 		// Cast from com.google.gson.internal.LinkedTreeMap
 		@Suppress("UNCHECKED_CAST")
-		var envs = args["envs"] as? Map<String, String> ?: mapOf()
+		val env = args["env"] as? Map<String, String> ?: mapOf()
 
 		setupCommonInitializationParams(args)
 
@@ -114,7 +114,7 @@ class KotlinDebugAdapter(
 			projectRoot,
 			vmArguments,
 			cwd,
-			envs
+			env
 		)
 		debuggee = launcher.launch(
 			config,

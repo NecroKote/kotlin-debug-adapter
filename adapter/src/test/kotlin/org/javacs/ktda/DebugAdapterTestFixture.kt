@@ -64,7 +64,7 @@ abstract class DebugAdapterTestFixture(
             "mainClass" to mainClass,
             "vmArguments" to vmArguments,
             "cwd" to cwd,
-            "envs" to envs
+            "env" to envs
         )).join()
         println("Launched")
     }

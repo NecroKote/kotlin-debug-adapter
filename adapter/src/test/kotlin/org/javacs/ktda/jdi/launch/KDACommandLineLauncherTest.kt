@@ -16,7 +16,7 @@ class KDACommandLineLauncherTest {
         assertThat(args.size, greaterThanOrEqualTo(2))
 
         assertThat(args["cwd"], notNullValue())
-        assertThat(args["envs"], notNullValue())
+        assertThat(args["env"], notNullValue())
         //suspend should default to true
         assertThat(args["suspend"]?.value(), equalTo("true"))
 

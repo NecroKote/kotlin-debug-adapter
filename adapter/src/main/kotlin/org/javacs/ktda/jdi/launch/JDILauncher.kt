@@ -27,7 +27,7 @@ class JDILauncher(
 	
 	override fun launch(config: LaunchConfiguration, context: DebugContext): JDIDebuggee {
 		val connector = createLaunchConnector()
-		LOG.info("Starting JVM debug session with main class {}", config.mainClass)
+		LOG.info("Starting JVM debug session with main class {} and connector {}", config.mainClass, connector)
 		
 		LOG.debug("Launching VM")
 		val vm = connector.launch(createLaunchArgs(config, connector)) ?: throw KotlinDAException("Could not launch a new VM")
@@ -50,11 +50,11 @@ class JDILauncher(
 	
 	private fun createLaunchArgs(config: LaunchConfiguration, connector: Connector): Map<String, Connector.Argument> = connector.defaultArguments()
 		.also { args ->
-			args["suspend"]!!.setValue("true")
-			args["options"]!!.setValue(formatOptions(config))
-			args["main"]!!.setValue(formatMainClass(config))
-			args["cwd"]!!.setValue(config.cwd.toAbsolutePath().toString())
-			args["envs"]!!.setValue(KDACommandLineLauncher.urlEncode(config.envs.map { "${it.key}=${it.value}" }) ?: "")
+			args.get("suspend")?.setValue("true") 
+			args.get("options")?.setValue(formatOptions(config))
+			args.get("main")?.setValue(formatMainClass(config))
+			args.get("cwd")?.setValue(config.cwd.toAbsolutePath().toString())
+			args.get("env")?.setValue(KDACommandLineLauncher.urlEncode(config.env.map { "${it.key}=${it.value}" }) ?: "")
 		}
 	
 	private fun createAttachArgs(config: AttachConfiguration, connector: Connector): Map<String, Connector.Argument> = connector.defaultArguments()
@@ -65,12 +65,13 @@ class JDILauncher(
 		}
 	
 	private fun createAttachConnector(): AttachingConnector = vmManager.attachingConnectors()
-		.let { it.find { it.name() == "com.sun.jdi.SocketAttach" } ?: it.firstOrNull() }
+		.let { it.find { it.name() == "com.sun.jdi.SocketAttach" } }
 		?: throw KotlinDAException("Could not find an attaching connector (for a new debuggee VM)")
-	
-	private fun createLaunchConnector(): LaunchingConnector = vmManager.launchingConnectors().also { LOG.debug("connectors: $it") }
+
+	private fun createLaunchConnector(): LaunchingConnector = vmManager.launchingConnectors()
+		.also { LOG.debug("connectors: $it") }
 		// Using our own connector to support cwd and envs
-		.let { it.find { it.name() == KDACommandLineLauncher::class.java.name } ?: it.firstOrNull() }
+		.let { it.find { it.name() == KDACommandLineLauncher::class.java.name } }
 		?: throw KotlinDAException("Could not find a launching connector (for a new debuggee VM)")
 	
 	private fun sourcesRootsOf(projectRoot: Path): Set<Path> =

@@ -26,7 +26,7 @@ internal const val ARG_SUSPEND = "suspend"
 internal const val ARG_QUOTE = "quote"
 internal const val ARG_VM_EXEC = "vmexec"
 internal const val ARG_CWD = "cwd"
-internal const val ARG_ENVS = "envs"
+internal const val ARG_ENV = "env"
 
 /**
  * A custom LaunchingConnector that supports cwd and env variables
