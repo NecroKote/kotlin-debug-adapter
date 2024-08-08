@@ -56,7 +56,7 @@ open class KDACommandLineLauncher : LaunchingConnector {
             set(ARG_HOME, StringArgument(ARG_HOME, "Java home", value = System.getProperty("java.home")))
             set(ARG_OPTIONS, StringArgument(ARG_OPTIONS, "Jvm arguments"))
             set(ARG_MAIN, StringArgument(ARG_MAIN, "Main class name and parameters", mustSpecify = true))
-            set(ARG_SUSPEND, StringArgument(ARG_SUSPEND, "Whether launch the debugee in suspend mode", "true"))
+            set(ARG_SUSPEND, StringArgument(ARG_SUSPEND, "Whether launch the debugee in suspend mode", value = "true"))
             set(ARG_QUOTE, StringArgument(ARG_QUOTE, "Quote char", value = "\""))
             set(ARG_VM_EXEC, StringArgument(ARG_VM_EXEC, "The java exec", value = "java"))
             set(ARG_CWD, StringArgument(ARG_CWD, "Current working directory"))
